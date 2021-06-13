@@ -38,7 +38,7 @@ The application consists of a React frontend a Flask backend which uses a Postgr
 
    ``` export FLASK_ENV=development ```
 
-   ``` flask run ```
+   ``` flask run --reload```
    
    >**Note** - for Windows CMD:
 
@@ -46,7 +46,7 @@ The application consists of a React frontend a Flask backend which uses a Postgr
 
    ``` set FLASK_ENV=development ```
    
-   ``` flask run ```
+   ``` flask run --reload```
 
     >**Note** - for Windows PowerShell:
 
@@ -54,7 +54,7 @@ The application consists of a React frontend a Flask backend which uses a Postgr
 
    ``` $env:FLASK_ENV = "development" ```
    
-   ``` flask run ```
+   ``` flask run --reload ```
 
 ### Frontend Setup
 From the frontend directory run the below commands:
@@ -62,6 +62,16 @@ From the frontend directory run the below commands:
 2. To start local server: ``` npm start ```
 You can access the frontend by navigating to : ``` http://localhost:3000 ```
 
+
+## Testing
+To run tests run:
+```
+dropdb trivia_test
+createdb trivia_test
+psql trivia_test < trivia.psql
+python test_flaskr.py
+
+```
 
 ## API Endpoints
 
@@ -71,12 +81,16 @@ You can access the frontend by navigating to : ``` http://localhost:3000 ```
 - Request Arguments: None
 - Returns: An object with a single key, categories, that contains an object of id: category_string key:value pairs. 
 {
-    'categories': { '1' : "Science",
-    '2' : "Art",
-    '3' : "Geography",
-    '4' : "History",
-    '5' : "Entertainment",
-    '6' : "Sports" }
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "success": true, 
+  "total_categories": 6
 } 
 ```
 ```
@@ -84,7 +98,13 @@ GET '/questions?page=${integer}'
 - Fetches a paginated set of questions, a total number of questions, all categories and current category string. 
 - Request Arguments: page - integer
 - Returns: An object with 10 paginated questions, total questions, object including all categories, and current category string
-{
+{  
+   'categories': { '1' : "Science",
+    '2' : "Art",
+    '3' : "Geography",
+    '4' : "History",
+    '5' : "Entertainment",
+    '6' : "Sports" },
     'questions': [
         {
             'id': 1,
@@ -95,12 +115,7 @@ GET '/questions?page=${integer}'
         },
     ],
     'totalQuestions': 100,
-    'categories': { '1' : "Science",
-    '2' : "Art",
-    '3' : "Geography",
-    '4' : "History",
-    '5' : "Entertainment",
-    '6' : "Sports" },
+    "success": true,    
     'currentCategory': 'History'
 }
 ```
@@ -111,17 +126,39 @@ GET '/categories/${id}/questions'
 - Request Arguments: id - integer
 - Returns: An object with questions for the specified category, total questions, and current category string 
 {
-    'questions': [
-        {
-            'id': 1,
-            'question': 'This is a question',
-            'answer': 'This is an answer', 
-            'difficulty': 5,
-            'category': 4
-        },
-    ],
-    'totalQuestions': 100,
-    'currentCategory': 'History'
+  "current_category": 2, 
+  "questions": [
+    {
+      "answer": "Escher", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 16, 
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    }, 
+    {
+      "answer": "Mona Lisa", 
+      "category": 2, 
+      "difficulty": 3, 
+      "id": 17, 
+      "question": "La Giaconda is better known as what?"
+    }, 
+    {
+      "answer": "One", 
+      "category": 2, 
+      "difficulty": 4, 
+      "id": 18, 
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    }, 
+    {
+      "answer": "Jackson Pollock", 
+      "category": 2, 
+      "difficulty": 2, 
+      "id": 19, 
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 4
 }
 ```
 
@@ -129,7 +166,7 @@ GET '/categories/${id}/questions'
 DELETE '/questions/${id}'
 - Deletes a specified question using the id of the question
 - Request Arguments: id - integer
-- Returns: Does not need to return anything besides the appropriate HTTP status code. Optionally can return the id of the question. If you are able to modify the frontend, you can have it remove the question using the id instead of refetching the questions. 
+- Returns: Returns Success and Question ID that was deleted. 
 ```
 
 ```
@@ -171,7 +208,16 @@ POST '/questions'
     'searchTerm': 'this is the term the user is looking for'
 }
 - Returns: any array of questions, a number of totalQuestions that met the search term and the current category string 
-{
+{   
+   "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "current_category": null, 
     'questions': [
         {
             'id': 1,
@@ -181,8 +227,8 @@ POST '/questions'
             'category': 5
         },
     ],
-    'totalQuestions': 100,
-    'currentCategory': 'Entertainment'
+    "success": true, 
+    "total_questions": 30
 }
 ```
 
